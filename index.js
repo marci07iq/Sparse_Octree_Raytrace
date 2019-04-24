@@ -153,13 +153,18 @@ function drawScene() {
 	look_right = [Math.sin(angH) * canvas.width * 1.0 / canvas.height, -Math.cos(angH) * canvas.width * 1.0 / canvas.height, 0]
 	look_up = [-Math.cos(angH) * Math.sin(angV), -Math.sin(angH) * Math.sin(angV), Math.cos(angV)];
 
+	var mov_dir = [Math.cos(angH), Math.sin(angH), 0];
+	var mov_right = [Math.sin(angH), -Math.cos(angH), 0]
+	var mov_up = [0, 0, 1];
+
+
 	for(var i = 0; i < 3; i++) {
-		if(keys['w']) cam_eye[i] += 5*look_dir[i];
-		if(keys['a']) cam_eye[i] -= 5*look_right[i];
-		if(keys['s']) cam_eye[i] -= 5*look_dir[i];
-		if(keys['d']) cam_eye[i] += 5*look_right[i];
-		if(keys['q']) cam_eye[i] -= 5*look_up[i];
-		if(keys['e']) cam_eye[i] += 5*look_up[i];
+		if(keys['w']) cam_eye[i] += 5*mov_dir[i];
+		if(keys['a']) cam_eye[i] -= 5*mov_right[i];
+		if(keys['s']) cam_eye[i] -= 5*mov_dir[i];
+		if(keys['d']) cam_eye[i] += 5*mov_right[i];
+		if(keys['q']) cam_eye[i] -= 5*mov_up[i];
+		if(keys['e']) cam_eye[i] += 5*mov_up[i];
 	}
 
 	gl.uniform3f(
@@ -253,19 +258,96 @@ function createVirtualMemory() {
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
 	changeVirtualMemoryBlock(16, [
-		0x80, 0x00,
-		0x82, 0x00,
-		0x88, 0x00,
+		0x10, 0x01,
+		0x10, 0x01,
+		0x10, 0x01,
 		0x00, 0x00,
-		0xa0, 0x00,
-		0xa2, 0x00,
-		0xa8, 0x00,
-		0xaa, 0x00
+		0x00, 0x00,
+		0x10, 0x01,
+		0x10, 0x01,
+		0x10, 0x01
+	]);
+
+	changeVirtualMemoryBlock(17, [
+		0x20, 0x01,
+		0x20, 0x01,
+		0x20, 0x01,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x20, 0x01,
+		0x20, 0x01,
+		0x20, 0x01
+	]);
+
+	changeVirtualMemoryBlock(18, [
+		0x30, 0x01,
+		0x30, 0x01,
+		0x30, 0x01,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x30, 0x01,
+		0x30, 0x01,
+		0x30, 0x01
+	]);
+
+	changeVirtualMemoryBlock(19, [
+		0x40, 0x01,
+		0x40, 0x01,
+		0x40, 0x01,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x40, 0x01,
+		0x40, 0x01,
+		0x40, 0x01
+	]);
+
+	changeVirtualMemoryBlock(20, [
+		0x50, 0x01,
+		0x50, 0x01,
+		0x50, 0x01,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x50, 0x01,
+		0x50, 0x01,
+		0x50, 0x01
+	]);
+
+	changeVirtualMemoryBlock(21, [
+		0x60, 0x01,
+		0x60, 0x01,
+		0x60, 0x01,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x60, 0x01,
+		0x60, 0x01,
+		0x60, 0x01
+	]);
+
+	changeVirtualMemoryBlock(22, [
+		0xc0, 0x00,
+		0xc2, 0x00,
+		0xc8, 0x00,
+		0x00, 0x00,
+		0x00, 0x00,
+		0xf2, 0x00,
+		0xf8, 0x00,
+		0xfa, 0x00
+	]);
+
+	changeVirtualMemoryBlock(23, [
+		0x00, 0x00,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x00, 0x00,
+		0x00, 0x00
 	]);
 }
 
 function changeVirtualMemoryBlock(index, vals) {
-	gl.texSubImage2D(gl.TEXTURE_2D, 0, (index%16)*16, index/16, 16, 1, gl.RED_INTEGER, gl.UNSIGNED_BYTE, new Uint8Array(vals));
+	gl.texSubImage2D(gl.TEXTURE_2D, 0, (index%16)*16, Math.floor(index/16), 16, 1, gl.RED_INTEGER, gl.UNSIGNED_BYTE, new Uint8Array(vals));
 	for(var i = 0; i < 16; i++) {
 		virtMem[Math.floor(index/16) + i][index%16] = vals[i];
 	}

@@ -43,6 +43,8 @@ function moveCallback(e) {
         e.webkitMovementY ||
         0;
     angV -= movementY / 50.0;
+
+    angV = Math.max(-1.57, Math.min(angV, 1.57));
 }
 
 function initMouse() {
